@@ -2,6 +2,7 @@ package com.ohgiraffers.collection.section01;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /*
@@ -65,6 +66,11 @@ public class Application {
 //        arrayBooks[2] = "add unavailable";
 
         System.out.println("Array : "+ Arrays.toString(arrayBooks) );
+
+        bookList.add("A");
+        System.out.println("ArrayList : " + bookList);
+        Collections.sort(bookList);
+        System.out.println("ArrayList : " + bookList);
 
 
 
