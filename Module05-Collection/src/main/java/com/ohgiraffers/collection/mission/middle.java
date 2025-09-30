@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+
 public class middle {
     public static void main(String[] args) {
         // 1. 1~45 사이의 중복되지 않는 번호를 저장할 HashSet 생성
