@@ -1,23 +1,26 @@
 package com.ohgiraffer.jdbc.dao;
 
+import com.ohgiraffer.jdbc.model.Course;
 import com.ohgiraffer.jdbc.util.QueryUtil;
-import com.sun.jdi.connect.spi.Connection;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
-
-/**
+import java.util.List;
+/*
  * DAO(Data Access Object)
- * 데이텁ㅇ
- */
-public class CourseDAO {
+ * 데이터베이스의 courses 테이블에 직접 접근하여 sql을 실행하는 책임을 맡는 클래스이다.
+ * 오직 데이터 CRUD 작업에만 집중하며, 비즈니스 로직이나 트랜잭션은 service 계층에 위임한다.
+ * */
+public class CourseDao {
+
+
     private final Connection connection;
-    public CourseDAO(Connection connection, Connection connection1) {
-        this.connecton = connection;
+
+    public CourseDao(Connection connection) {
+        this.connection = connection;
     }
-    public List<Course> findall() throws SQLException{
+
+    public List<Course> findAll() throws SQLException{
         List<Course> courses = new ArrayList<>();
         String sql = "select course_id, author_id, title, description, status FROM courses";
         try(PreparedStatement pstmt = connection.prepareStatement(sql)){
@@ -36,10 +39,11 @@ public class CourseDAO {
         }
         return courses;
     }
+
     public long save(Course course) throws SQLException{
         String sql = QueryUtil.getQuery("course.save");
 
-        try(PreparedStatement pstmt = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)){
+        try(PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
             pstmt.setLong(1, course.getAuthorId());
             pstmt.setString(2,course.getTitle());
             pstmt.setString(3,course.getDescription());
@@ -50,22 +54,16 @@ public class CourseDAO {
                 try(ResultSet rs = pstmt.getGeneratedKeys()){
                     if(rs.next()){
                         return rs.getLong(1);
-                    } else{
-                System.out.println("failed");
-            }
+                    }
                 }
-                else if(num==2) {
-            System.out.print("조회할 과정 번호 : ");
-            int id = scanner.nextInt();
-            scanner.nextLine();
-            Course foundModule = courseService.findCourse(id);
-        }
+            }
         }
         throw new SQLException("강좌 생성에 실패하였습니다.");
     }
-    public Course findById(long id) throws SQLExcepton {
+
+    public Course findById(long id) throws SQLException {
     String query = QueryUtil.getQuery("course.findById");
-    try(PrepareStatement pstmt = connection.prepareStatement(query)){
+    try(PreparedStatement pstmt = connection.prepareStatement(query)){
         pstmt.setLong(1,id);
         ResultSet rs = pstmt.executeQuery();
         if(rs.next()){
@@ -76,19 +74,22 @@ public class CourseDAO {
                     rs.getString(4),
                     rs.getString(5)
             );
-        }else{return null;
+        }else{
+            return null;
         }
     }catch (RuntimeException e){
         throw new RuntimeException(e.getMessage());
+     }
     }
-    }
+
     public int update(Course course) throws SQLException {
     String query = QueryUtil.getQuery("course.update");
     int rowsAffected =0;
+
     try(PreparedStatement pstmt = connection.prepareStatement(query)){
-        pstmt.setString(1,course.getTItle());
+        pstmt.setString(1,course.getTitle());
         pstmt.setString(2,course.getDescription());
-        pstmt.setLong(3,course.getCourseID());
+        pstmt.setLong(3,course.getCourseId());
         rowsAffected = pstmt.executeUpdate();
     }
     return rowsAffected;

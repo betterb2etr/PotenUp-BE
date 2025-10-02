@@ -35,12 +35,16 @@ public class QueryUtil {
                 //w3c
                 Element queryElement = (Element)nodeList.item(i);
                 String key = queryElement.getAttribute("key");
-                String sql = queryElement.getTextContent().trim;
+                String sql = queryElement.getTextContent().trim();
                 queries.put(key, sql);
             }
 
         }catch(Exception e){
             throw new RuntimeException("쿼리 로딩중 오류 발생", e);
         }
+    }
+
+    public static String getQuery(String key) {
+        return queries.get(key);
     }
 }
